@@ -46,7 +46,7 @@ class JsonCValidator:
                            }, self.json_tit.dict_registers: registers_set}
         return peripheral_dict
 
-    def check_exclude_json_pins(self, perif, name):
+    def _check_exclude_json_pins(self, perif, name):
         json_excl = JSONExcludes(perif, name)
         return json_excl.check_same()
 
@@ -73,7 +73,7 @@ class JsonCValidator:
                                 pin_mux_conf_dict = peripheral.get(self.json_tit.json_pin_mux_conf, '')
 
                                 # special json excludes
-                                check_json_constrains = self.check_exclude_json_pins(peripheral_orig, peripheral_name)
+                                check_json_constrains = self._check_exclude_json_pins(peripheral_orig, peripheral_name)
 
                                 if len(pin_mux_conf_dict) and not check_json_constrains:
                                     added_dict = self._parse_peripheral_mux_config(
