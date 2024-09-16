@@ -5,7 +5,7 @@ from collections import defaultdict
 from data_structures import CFileConst, JSONStruct, CSVHeaders
 from constants import JSON_PATH_PREFIX, JSON_FILE_NAME, C_CONST_FILE_NAME, C_CONST_STRING_PREFIX, \
     C_CONST_VAR_PREFIX, C_CONST_PIN_PREFIX, CSV_COMPARED_FILE_NAME, JSON_FUNC_NAMES, \
-    NOT_PRESENT_VALUE, YES_VALUE, NO_VALUE, IGNORE_C_CONST_NAME_LIST
+    NOT_PRESENT_VALUE, YES_VALUE, NO_VALUE
 
 
 # JSON file parsing to the list. C file parsing to the dict
