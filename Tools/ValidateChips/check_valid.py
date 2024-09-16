@@ -5,7 +5,7 @@ from collections import defaultdict
 from data_structures import CFileConst, JSONStruct, CSVHeaders
 from constants import JSON_PATH_PREFIX, JSON_FILE_NAME, C_CONST_FILE_NAME, C_CONST_STRING_PREFIX, \
     C_CONST_VAR_PREFIX, C_CONST_PIN_PREFIX, CSV_COMPARED_FILE_NAME, JSON_FUNC_NAMES, \
-    NOT_PRESENT_VALUE, YES_VALUE, NO_VALUE
+    NOT_PRESENT_VALUE, YES_VALUE, NO_VALUE, IGNORE_C_CONST_NAME_LIST
 
 
 # JSON file parsing to the list. C file parsing to the dict
@@ -206,17 +206,21 @@ class JsonCValidator:
                     keys_to_remove.append(key)
                     key = key[:-1]
                     self.dict_const_pins[key] = val
+                    keys_to_remove.append(key)
                     self._check_similar_validation(val[self.const_names.pin_func])
                     self._clear_json_list()
                 else:
                     keys_to_remove.append(key)
                     key = key.split("_")[0]
                     self.dict_const_pins[key] = val
+                    keys_to_remove.append(key)
                     self._check_similar_validation(val[self.const_names.pin_func])
                     self._clear_json_list()
 
         for key in keys_to_remove:
-            del self.dict_const_pins[key]
+            if key in self.dict_const_pins:
+                self.dict_const_pins[key] = {}
+                del self.dict_const_pins[key]
 
     def make_compare_validation(self):
         self.parse_files()
