@@ -3,6 +3,7 @@ import copy
 import csv
 from collections import defaultdict
 from data_structures import CFileConst, JSONStruct, CSVHeaders
+from constrains import JSONExcludes
 from constants import JSON_PATH_PREFIX, JSON_FILE_NAME, C_CONST_FILE_NAME, C_CONST_STRING_PREFIX, \
     C_CONST_VAR_PREFIX, C_CONST_PIN_PREFIX, CSV_COMPARED_FILE_NAME, JSON_FUNC_NAMES, \
     NOT_PRESENT_VALUE, YES_VALUE, NO_VALUE
@@ -45,6 +46,10 @@ class JsonCValidator:
                            }, self.json_tit.dict_registers: registers_set}
         return peripheral_dict
 
+    def check_exclude_json_pins(self, perif, name):
+        json_excl = JSONExcludes(perif, name)
+        return json_excl.check_same()
+
     def parse_json(self):
         with open(f"{JSON_PATH_PREFIX}/{JSON_FILE_NAME}", 'r') as file:
             data = json.load(file)
@@ -66,7 +71,11 @@ class JsonCValidator:
                                 peripheral_orig = peripheral.get(self.json_tit.json_peripheral, '')
                                 peripheral_name = peripheral.get(self.json_tit.json_name, '')
                                 pin_mux_conf_dict = peripheral.get(self.json_tit.json_pin_mux_conf, '')
-                                if len(pin_mux_conf_dict):
+
+                                # special json excludes
+                                check_json_constrains = self.check_exclude_json_pins(peripheral_orig, peripheral_name)
+
+                                if len(pin_mux_conf_dict) and not check_json_constrains:
                                     added_dict = self._parse_peripheral_mux_config(
                                         peripheral_orig, peripheral_name, pin_mux_conf_dict, pack_name, pin_name)
                                     if len(added_dict):
@@ -219,7 +228,6 @@ class JsonCValidator:
 
         for key in keys_to_remove:
             if key in self.dict_const_pins:
-                self.dict_const_pins[key] = {}
                 del self.dict_const_pins[key]
 
     def make_compare_validation(self):
